@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import 'dotenv/config';
+import 'express-async-errors';
 
 import express, {
   Express,
@@ -14,7 +15,6 @@ import '@shared/container';
 
 import Database from '../database';
 import ICRUDProvider from '@shared/container/providers/CRUDProvider/models/ICRUDProvider';
-import User from '@modules/template/infra/models/User';
 
 import ServerError from '@shared/errors/ServerError';
 import ErrorMessages from '@constants/ErrorMessages';
@@ -70,6 +70,8 @@ export default class Server {
             .status(err.statusCode)
             .formatedJson({}, { message: err.message, success: false });
         }
+        console.log(err);
+
         return response
           .status(500)
           .formatedJson(

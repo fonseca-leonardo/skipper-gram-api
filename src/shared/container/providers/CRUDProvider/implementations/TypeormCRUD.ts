@@ -1,8 +1,6 @@
 import { getConnection, getRepository } from 'typeorm';
 import { Response } from 'express';
 
-import UserTypeorm from '@modules/template/infra/typeorm/entities/User';
-
 import ICRUDOptions from '../models/ICRUDOptions';
 import ICRUDProvider from '../models/ICRUDProvider';
 
@@ -14,9 +12,7 @@ export default class TypeormCRUD implements ICRUDProvider {
   private modelRegister: ITypeormModelRegister;
 
   constructor() {
-    this.modelRegister = {
-      users: UserTypeorm,
-    };
+    this.modelRegister = {};
   }
 
   public async index({

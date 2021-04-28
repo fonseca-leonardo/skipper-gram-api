@@ -8,11 +8,15 @@ export class CreateTestTable1618965084680 implements MigrationInterface {
       name: 'users',
       columns: [
         {
-          name: 'id',
+          name: '_id',
           type: 'uuid',
           isPrimary: true,
           generationStrategy: 'uuid',
           isGenerated: true,
+        },
+        {
+          name: 'name',
+          type: 'varchar',
         },
         {
           name: 'email',

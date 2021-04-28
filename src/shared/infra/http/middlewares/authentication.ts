@@ -1,20 +1,22 @@
 import { inject, injectable } from 'tsyringe';
+import { NextFunction, Request, Response } from 'express';
 
 import IAuthenticationProvider from '@shared/container/providers/AuthenticationProvider/models/IAuthenticationProvider';
 import ServerError from '@shared/errors/ServerError';
 import ErrorMessages from '@constants/ErrorMessages';
-import { NextFunction, Request, Response } from 'express';
 
 @injectable()
 export default class AuthenticationMiddleware {
   constructor(
     @inject('AuthenticationProvider')
     private authProvider: IAuthenticationProvider,
-  ) {
-    this.authProvider = this.authProvider;
-  }
+  ) {}
 
-  public async init(request: Request, next: NextFunction): Promise<void> {
+  public async init(
+    request: Request,
+    _: Response,
+    next: NextFunction,
+  ): Promise<void> {
     const { authorization } = request.headers;
 
     if (!authorization) {
@@ -23,10 +25,18 @@ export default class AuthenticationMiddleware {
 
     const [, token] = authorization.split(' ');
 
-    const decoded = this.authProvider.authorize<{ id: string; name: string }>(
+    const decoded = this.authProvider.authorize<SkipperAPI.IUserTokenData>(
       token,
       process.env.TOKEN_SECRET || '',
     );
+
+    if (!decoded) {
+      throw new ServerError(ErrorMessages.NOT_ALLOWED);
+    }
+
+    const { data } = decoded;
+
+    request.user = data;
 
     return next();
   }

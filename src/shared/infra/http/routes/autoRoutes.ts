@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { Request, Response, NextFunction, Router } from 'express';
 
-import User from '@modules/template/infra/models/User';
 import ICRUDProvider from '@shared/container/providers/CRUDProvider/models/ICRUDProvider';
 
 type IExpressMethod = (

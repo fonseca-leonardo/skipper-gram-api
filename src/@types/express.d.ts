@@ -6,7 +6,7 @@ interface FormatedJsonOptions {
 
 declare namespace Express {
   export interface Request {
-    user?: {};
+    user?: SkipperAPI.IUserTokenData;
   }
 
   export interface Response {

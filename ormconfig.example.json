@@ -1,0 +1,14 @@
+{
+  "name": "default",
+  "type": "",
+  "host": "",
+  "port": "",
+  "username": "",
+  "password": "",
+  "database": "",
+  "migrations": ["./src/shared/infra/database/typeorm/migrations/*.ts"],
+  "entities": ["./src/modules/**/infra/typeorm/entities/*.ts"],
+  "cli": {
+    "migrationsDir": "./src/shared/infra/database/typeorm/migrations"
+  }
+}

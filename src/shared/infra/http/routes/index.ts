@@ -1,18 +1,17 @@
 import { Router } from 'express';
-
-import TemplateModule from '@modules/template/infra/http/routes';
+import UserModule from '@modules/users/infra/http/routes';
 
 export default class AppRoutes {
   private router: Router;
-  private templateModuleRouter: TemplateModule;
+  private userModuleRouter: UserModule;
 
   constructor() {
     this.router = Router({ mergeParams: true });
-    this.templateModuleRouter = new TemplateModule();
+    this.userModuleRouter = new UserModule();
   }
 
   public init() {
-    this.router.use(this.templateModuleRouter.init());
+    this.router.use(this.userModuleRouter.init());
 
     return this.router;
   }
