@@ -10,7 +10,7 @@ import {
 } from '../controller';
 import { container } from 'tsyringe';
 
-export default class TemplateRouter {
+export default class UserRouter {
   private router: Router;
 
   private authenticationMiddleware: AuthenticationMiddleware;
@@ -75,7 +75,7 @@ export default class TemplateRouter {
     );
 
     this.router.get(
-      '/authorize',
+      '/authenticate',
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
       this.sessionController.index,
     );

@@ -9,6 +9,7 @@ import express, {
   Response,
   Router,
 } from 'express';
+import cors from 'cors';
 import { container, inject, injectable } from 'tsyringe';
 
 import '@shared/container';
@@ -21,6 +22,7 @@ import ErrorMessages from '@constants/ErrorMessages';
 import Middlewares from './middlewares';
 import AppRoutes from './routes';
 import AutoRoutes from './routes/autoRoutes';
+import { CelebrateError } from 'celebrate';
 
 @injectable()
 export default class Server {
@@ -51,6 +53,8 @@ export default class Server {
   }
 
   private middlewares() {
+    this.router.use(cors());
+
     const { handleResponseMiddleware } = this.appMiddlewares.init();
     this.router.use(handleResponseMiddleware);
   }
@@ -70,6 +74,20 @@ export default class Server {
             .status(err.statusCode)
             .formatedJson({}, { message: err.message, success: false });
         }
+
+        if (err instanceof CelebrateError) {
+          let errorMessage: string | undefined = err.details.get('body')
+            ?.message;
+
+          if (!errorMessage) {
+            errorMessage = err.details.get('query')?.message;
+          }
+
+          return response
+            .status(400)
+            .formatedJson({}, { message: errorMessage, success: false });
+        }
+
         console.log(err);
 
         return response

@@ -1,18 +1,18 @@
 import { Router } from 'express';
 
-import UserRouter from './users.routes';
+import PostRouter from './posts.routes';
 
 export default class ModuleRoutes {
   private router: Router;
-  private userRouter: UserRouter;
+  private postRouter: PostRouter;
 
   constructor() {
     this.router = Router({ mergeParams: true });
-    this.userRouter = new UserRouter();
+    this.postRouter = new PostRouter();
   }
 
   public init() {
-    this.router.use('/users', this.userRouter.init());
+    this.router.use('/posts', this.postRouter.init());
 
     return this.router;
   }

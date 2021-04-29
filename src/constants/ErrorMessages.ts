@@ -5,6 +5,7 @@ const ErrorMessages = {
   INVALID_USER_CREDENTIALS: 'Senha ou e-mail inválidos',
   USER_NOT_FOUND: 'Usuário não encontrado',
   NOT_ALLOWED: 'Você não tem permissão',
+  POST_NOTFOUND: 'Post não encontrado',
 };
 
 export default ErrorMessages;
