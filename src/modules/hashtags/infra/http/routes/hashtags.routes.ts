@@ -1,61 +1,58 @@
 import { Router } from 'express';
-import AuthenticationMiddleware from '@shared/infra/http/middlewares/authentication';
-import PostController from '../controller/PostController';
 import { container } from 'tsyringe';
 import { celebrate, Joi, Segments } from 'celebrate';
+import AuthenticationMiddleware from '@shared/infra/http/middlewares/authentication';
+import { HashtagController } from '../controller';
 
-export default class PostRouter {
+export default class HashtagRouter {
   private router: Router;
 
   private authenticationMiddleware: AuthenticationMiddleware;
 
-  private postController: PostController;
+  private hashtagController: HashtagController;
 
   constructor() {
     this.router = Router({ mergeParams: true });
-
     this.authenticationMiddleware = container.resolve(AuthenticationMiddleware);
-
-    this.postController = new PostController();
+    this.hashtagController = new HashtagController();
   }
 
   public init() {
     this.router.post(
-      '/',
+      '',
       celebrate({
         [Segments.BODY]: {
-          title: Joi.string().required(),
-          text: Joi.string().optional(),
-          campaignId: Joi.string().optional(),
+          name: Joi.string().required(),
+          tags: Joi.array().items(Joi.string()).min(0),
+          tagColor: Joi.string()
+            .regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/)
+            .required(),
         },
       }),
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.store,
-    );
-
-    this.router.get(
-      '/:postId',
-      (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.index,
+      this.hashtagController.store,
     );
 
     this.router.patch(
-      '/:postId',
+      '/:hashtagId',
       celebrate({
         [Segments.BODY]: {
-          title: Joi.string().allow(null, '').optional(),
-          text: Joi.string().allow(null, '').optional(),
-          campaignId: Joi.string().allow(null, '').optional(),
+          name: Joi.string().allow(null, '').optional(),
+          tags: Joi.array().items(Joi.string()).min(0),
+          tagColor: Joi.string()
+            .allow(null, '')
+            .regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/)
+            .optional(),
         },
       }),
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.update,
+      this.hashtagController.update,
     );
 
     this.router.delete(
-      '/:postId',
+      '/:hashtagId',
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.delete,
+      this.hashtagController.delete,
     );
 
     this.router.post(
@@ -68,7 +65,7 @@ export default class PostRouter {
         },
       }),
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.show,
+      this.hashtagController.show,
     );
 
     return this.router;

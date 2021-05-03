@@ -20,7 +20,7 @@ export default class AuthenticationMiddleware {
     const { authorization } = request.headers;
 
     if (!authorization) {
-      throw new ServerError(ErrorMessages.NOT_ALLOWED);
+      throw new ServerError(ErrorMessages.NOT_ALLOWED, 401);
     }
 
     const [, token] = authorization.split(' ');
@@ -31,7 +31,7 @@ export default class AuthenticationMiddleware {
     );
 
     if (!decoded) {
-      throw new ServerError(ErrorMessages.NOT_ALLOWED);
+      throw new ServerError(ErrorMessages.NOT_ALLOWED, 401);
     }
 
     const { data } = decoded;

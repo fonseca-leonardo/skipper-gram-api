@@ -1,11 +1,12 @@
 import { ICreatePostDTO, IFilterPostDTO } from '@modules/posts/dtos';
 import IPostRepository from '@modules/posts/repositories/IPostRepository';
+import User from '@modules/users/infra/models/User';
 import Post from '../../models/Post';
 import MongoosePost from '../entities/Post';
 
 export default class PostRepository implements IPostRepository {
-  public async findById(_id: string) {
-    return MongoosePost.findOne({ _id }).exec();
+  public async findById(_id: string, user: User) {
+    return MongoosePost.findOne({ _id, user }).populate('campaign').exec();
   }
 
   public async create(data: ICreatePostDTO): Promise<Post> {
@@ -19,20 +20,27 @@ export default class PostRepository implements IPostRepository {
   public async list({
     searchTerm,
     skip,
+    user,
     take,
-  }: IFilterPostDTO): Promise<Post[]> {
+  }: IFilterPostDTO): Promise<{ list: Post[]; count: number }> {
     const posts = await MongoosePost.find({
-      $or: [
-        { title: { $regex: `.*${searchTerm}.*`, $options: 'i' } },
-        { 'campaign.name': { $regex: `.*${searchTerm}.*`, $options: 'i' } },
-      ],
+      user,
+      $or: [{ title: { $regex: `.*${searchTerm}.*`, $options: 'i' } }],
     })
       .skip(skip)
       .limit(take)
       .populate('campaign')
+      .sort({ updatedAt: 'desc' })
       .exec();
 
-    return posts;
+    const count = await MongoosePost.find({
+      user,
+      $or: [{ title: { $regex: `.*${searchTerm}.*`, $options: 'i' } }],
+    })
+      .countDocuments()
+      .exec();
+
+    return { list: posts, count };
   }
 
   public async delete(post: Post): Promise<void> {

@@ -1,6 +1,6 @@
 import User from '@modules/users/infra/models/User';
 
-export default interface IFilterPostDTO {
+export default interface IFilterHashtageDTO {
   skip: number;
 
   take: number;

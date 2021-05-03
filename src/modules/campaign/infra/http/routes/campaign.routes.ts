@@ -1,22 +1,24 @@
 import { Router } from 'express';
-import AuthenticationMiddleware from '@shared/infra/http/middlewares/authentication';
-import PostController from '../controller/PostController';
-import { container } from 'tsyringe';
 import { celebrate, Joi, Segments } from 'celebrate';
 
-export default class PostRouter {
+import AuthenticationMiddleware from '@shared/infra/http/middlewares/authentication';
+
+import CampaignController from '../controller/CampaignController';
+
+import { container } from 'tsyringe';
+
+export default class UserRouter {
   private router: Router;
 
   private authenticationMiddleware: AuthenticationMiddleware;
-
-  private postController: PostController;
+  private campaignController: CampaignController;
 
   constructor() {
     this.router = Router({ mergeParams: true });
 
     this.authenticationMiddleware = container.resolve(AuthenticationMiddleware);
 
-    this.postController = new PostController();
+    this.campaignController = new CampaignController();
   }
 
   public init() {
@@ -25,37 +27,33 @@ export default class PostRouter {
       celebrate({
         [Segments.BODY]: {
           title: Joi.string().required(),
-          text: Joi.string().optional(),
-          campaignId: Joi.string().optional(),
+          tagColor: Joi.string()
+            .regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/)
+            .required(),
         },
       }),
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.store,
-    );
-
-    this.router.get(
-      '/:postId',
-      (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.index,
+      this.campaignController.store,
     );
 
     this.router.patch(
-      '/:postId',
+      '/:campaignId',
       celebrate({
         [Segments.BODY]: {
-          title: Joi.string().allow(null, '').optional(),
-          text: Joi.string().allow(null, '').optional(),
-          campaignId: Joi.string().allow(null, '').optional(),
+          title: Joi.string().optional(),
+          tagColor: Joi.string()
+            .regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/)
+            .optional(),
         },
       }),
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.update,
+      this.campaignController.update,
     );
 
     this.router.delete(
-      '/:postId',
+      '/:campaignId',
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.delete,
+      this.campaignController.delete,
     );
 
     this.router.post(
@@ -68,7 +66,7 @@ export default class PostRouter {
         },
       }),
       (req, res, next) => this.authenticationMiddleware.init(req, res, next),
-      this.postController.show,
+      this.campaignController.show,
     );
 
     return this.router;

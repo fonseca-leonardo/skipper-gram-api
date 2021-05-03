@@ -21,7 +21,7 @@ interface IResponse {
   title: string;
   _id: string;
   text?: string;
-  campaign?: Campaign;
+  campaign?: Campaign | null;
   updatedAt: Date;
 }
 

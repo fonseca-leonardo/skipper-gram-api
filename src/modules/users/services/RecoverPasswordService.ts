@@ -45,7 +45,7 @@ export default class RecoverPasswordService {
         file: forgotPasswordView,
         variables: {
           name: user.name,
-          link: `${process.env.FRONT_URL}/recover/${recover._id}`,
+          link: `${process.env.FRONT_URL}/recuperar/${recover._id}`,
         },
       },
       subject: 'Troque sua senha',

@@ -1,41 +1,43 @@
 import { inject, injectable } from 'tsyringe';
 
 import { IUserRepository } from '@modules/users/repositories';
+
+import ICampaignRepository from '../repositories/ICampaignRepository';
 import ServerError from '@shared/errors/ServerError';
 import ErrorMessages from '@constants/ErrorMessages';
-import Campaign from '@modules/campaign/infra/models/Campaign';
-
-import IPostRepository from '../repositories/IPostRepository';
-import Post from '../infra/models/Post';
 
 interface IRequest {
-  skip?: number;
+  title: string;
 
-  searchTerm: string;
-
-  take?: number;
+  tagColor: string;
 
   userId: string;
 }
 
 interface IResponse {
-  postList: Post[];
-  count: number;
+  _id: string;
+
+  title: string;
+
+  tagColor: string;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 @injectable()
-export default class ListPostService {
+export default class CreateCampaignService {
   constructor(
-    @inject('PostRepository')
-    private postRepository: IPostRepository,
+    @inject('CampaignRepository')
+    private campaignRepository: ICampaignRepository,
     @inject('UserRepository')
     private userRepository: IUserRepository,
   ) {}
 
   public async execute({
-    skip,
-    take,
-    searchTerm,
+    title,
+    tagColor,
     userId,
   }: IRequest): Promise<IResponse> {
     const user = await this.userRepository.findById(userId);
@@ -44,13 +46,18 @@ export default class ListPostService {
       throw new ServerError(ErrorMessages.USER_NOT_FOUND);
     }
 
-    const { list, count } = await this.postRepository.list({
-      searchTerm,
+    const campaign = await this.campaignRepository.create({
+      tagColor,
+      title,
       user,
-      skip: skip || 0,
-      take: take || 10,
     });
 
-    return { postList: list, count };
+    return {
+      _id: campaign._id,
+      createdAt: campaign.createdAt,
+      tagColor: campaign.tagColor,
+      title: campaign.title,
+      updatedAt: campaign.updatedAt,
+    };
   }
 }

@@ -12,7 +12,7 @@ export default interface Post {
 
   updatedAt: Date;
 
-  campaign?: Campaign;
+  campaign?: Campaign | null;
 
   user: User;
 }

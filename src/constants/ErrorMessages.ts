@@ -6,6 +6,8 @@ const ErrorMessages = {
   USER_NOT_FOUND: 'Usuário não encontrado',
   NOT_ALLOWED: 'Você não tem permissão',
   POST_NOTFOUND: 'Post não encontrado',
+  CAMPAIGN_NOT_FOUND: 'Campanha não encontrada',
+  HASHTAG_NOT_FOUND: 'Hashtag não encontrada',
 };
 
 export default ErrorMessages;

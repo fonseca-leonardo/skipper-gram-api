@@ -1,5 +1,4 @@
 import ErrorMessages from '@constants/ErrorMessages';
-import Campaign from '@modules/campaign/infra/models/Campaign';
 import { IUserRepository } from '@modules/users/repositories';
 import ServerError from '@shared/errors/ServerError';
 import { inject, injectable } from 'tsyringe';
@@ -11,17 +10,10 @@ interface IRequest {
   userId: string;
 }
 
-interface IResponse {
-  _id: string;
-  title: string;
-  text?: string;
-  campaign?: Campaign | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+type IResponse = void;
 
 @injectable()
-export default class PostDetailService {
+export default class DeletePostService {
   constructor(
     @inject('PostRepository')
     private postRepository: IPostRepository,
@@ -42,8 +34,6 @@ export default class PostDetailService {
       throw new ServerError(ErrorMessages.POST_NOTFOUND);
     }
 
-    const { _id, title, text, campaign, createdAt, updatedAt } = post;
-
-    return { _id, title, text, campaign, createdAt, updatedAt };
+    await this.postRepository.delete(post);
   }
 }
