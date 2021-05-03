@@ -1,4 +1,4 @@
-FROM nodejs:lts-alpine
+FROM node:lts-alpine
 
 COPY package.json ./
 
