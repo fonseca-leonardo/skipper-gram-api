@@ -2,10 +2,12 @@ FROM node:lts-alpine
 
 COPY package.json ./
 
-RUN npm install
+RUN yarn install
 COPY . .
-RUN npm run build
+RUN yarn run build
+COPY . .
+
 
 EXPOSE 3333
 
-CMD [ "node", "dist/shared/infra/http/server.js" ]
+CMD [ "node", "dist/app.js" ]
